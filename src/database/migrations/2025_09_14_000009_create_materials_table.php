@@ -6,12 +6,16 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    /**
+     * Таблица материалов.
+     * Комментарий на поле id: "материалы".
+     */
     public function up(): void
     {
-        Schema::create('stocks_balance', function (Blueprint $table) {
-            $table->id()->comment('остаток материалов');
-            $table->foreignId('boiler_capacity_id')->constrained('boilers_capacity')->cascadeOnUpdate()->cascadeOnDelete();
-            $table->unsignedInteger('count');
+        Schema::create('materials', function (Blueprint $table) {
+            $table->id()->comment('материалы');
+            $table->string('name');
+            $table->string('unit');
             $table->timestamp('createAt')->useCurrent();
             $table->timestamp('updatedAt')->nullable()->useCurrentOnUpdate();
         });
@@ -19,7 +23,7 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('stocks_balance');
+        Schema::dropIfExists('materials');
     }
 };
 

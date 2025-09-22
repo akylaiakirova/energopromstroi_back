@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('write_off', function (Blueprint $table) {
             $table->id()->comment('списание материалов');
-            $table->foreignId('boiler_capacity_id')->constrained('boilers_capacity')->cascadeOnUpdate()->cascadeOnDelete();
+            $table->foreignId('material_id')->constrained('materials')->cascadeOnUpdate()->cascadeOnDelete();
             $table->unsignedInteger('count');
             $table->decimal('price_for_1', 12, 2)->nullable();
             $table->timestamp('createAt')->useCurrent();

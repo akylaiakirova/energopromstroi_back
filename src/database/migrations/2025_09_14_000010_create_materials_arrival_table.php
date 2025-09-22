@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('materials_arrival', function (Blueprint $table) {
             $table->id()->comment('поступление материалов');
-            $table->foreignId('boiler_capacity_id')->constrained('boilers_capacity')->cascadeOnUpdate()->cascadeOnDelete();
+            $table->foreignId('material_id')->constrained('materials')->cascadeOnUpdate()->cascadeOnDelete();
             $table->unsignedInteger('count');
             $table->decimal('price_for_1', 12, 2);
             $table->decimal('total_price', 14, 2);

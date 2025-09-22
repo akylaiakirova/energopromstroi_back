@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('conversions', function (Blueprint $table) {
             $table->id()->comment('конвертация');
-            $table->foreignId('boiler_capacity_id')->constrained('boilers_capacity')->cascadeOnUpdate()->cascadeOnDelete();
+            $table->foreignId('boiler_capacity_id')->nullable()->constrained('boilers_capacity')->cascadeOnUpdate()->cascadeOnDelete();
             $table->foreignId('responsible_user_id')->constrained('users')->cascadeOnUpdate()->cascadeOnDelete();
             $table->foreignId('author_user_id')->constrained('users')->cascadeOnUpdate()->cascadeOnDelete();
             $table->text('note')->nullable();

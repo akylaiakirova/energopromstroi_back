@@ -72,3 +72,91 @@
 Примечания:
 - По умолчанию guard `api` использует JWT. Ротация токена — через `/auth/refresh`.
 - Используйте HTTPS в продакшене.
+
+---------------------------------------------------------------------------
+
+# REST API — Мощности котлов (boilers_capacity)
+Все эндпоинты требуют заголовок `Authorization: Bearer <token>`.
+
+## Получить список мощностей
+- Метод: `GET /boilers-capacity`
+- Сортировка: по полю `name` по возрастанию
+- Ответ `200`: массив объектов
+```json
+[
+  { "id": 1, "name": "10 кВт", "createAt": "2025-09-14T10:00:00Z", "updatedAt": null },
+  { "id": 2, "name": "20 кВт", "createAt": "2025-09-14T10:05:00Z", "updatedAt": null }
+]
+```
+
+## Создать мощность котла
+- Метод: `POST /boilers-capacity`
+- Тело запроса (JSON):
+  - `name` (string, required)
+- Успешный ответ `201`: созданный объект
+```json
+{ "id": 3, "name": "30 кВт", "createAt": "2025-09-14T10:10:00Z", "updatedAt": null }
+```
+
+## Обновить мощность котла
+- Метод: `PUT /boilers-capacity/{id}`
+- Тело запроса (JSON):
+  - `name` (string, required)
+- Ответ `200`: обновлённый объект
+```json
+{ "id": 3, "name": "35 кВт", "createAt": "2025-09-14T10:10:00Z", "updatedAt": "2025-09-14T10:20:00Z" }
+```
+
+## Удалить мощность котла
+- Метод: `DELETE /boilers-capacity/{id}`
+- Ответ `200`:
+```json
+{ "message": "Удалено" }
+```
+
+---------------------------------------------------------------------------
+
+# REST API — Материалы (materials)
+Все эндпоинты требуют заголовок `Authorization: Bearer <token>`.
+
+## Получить список материалов
+- Метод: `GET /materials`
+- Сортировка: по полю `name` по возрастанию
+- Ответ `200`: массив объектов
+```json
+[
+  { "id": 1, "name": "Сталь A", "unit": "кг", "createAt": "2025-09-14T10:00:00Z", "updatedAt": null },
+  { "id": 2, "name": "Сталь B", "unit": "кг", "createAt": "2025-09-14T10:05:00Z", "updatedAt": null }
+]
+```
+
+## Создать материал
+- Метод: `POST /materials`
+- Тело запроса (JSON):
+  - `name` (string, required)
+  - `unit` (string, required)
+- Успешный ответ `201`: созданный объект
+```json
+{ "id": 3, "name": "Сталь C", "unit": "кг", "createAt": "2025-09-14T10:10:00Z", "updatedAt": null }
+```
+
+## Обновить материал
+- Метод: `PUT /materials/{id}`
+- Тело запроса (JSON):
+  - `name` (string, required)
+  - `unit` (string, required)
+- Ответ `200`: обновлённый объект
+```json
+{ "id": 3, "name": "Сталь C-1", "unit": "кг", "createAt": "2025-09-14T10:10:00Z", "updatedAt": "2025-09-14T10:20:00Z" }
+```
+
+## Удалить материал
+- Метод: `DELETE /materials/{id}`
+- Ответ `200`:
+```json
+{ "message": "Удалено" }
+```
+
+Примечания:
+- `materials_arrival`, `stocks_balance`, `write_off` используют `material_id`.
+- Для массовых операций с материалами в рамках конвертации используется `conversion_materials`.

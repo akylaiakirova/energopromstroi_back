@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BoilerCapacityController;
+use App\Http\Controllers\MaterialController;
 
 /*
 |--------------------------------------------------------------------------
@@ -33,6 +35,20 @@ Route::prefix('auth')->group(function () {
 
     // Выход пользователя (инвалидирует текущий токен). Требует валидного JWT.
     Route::post('logout', [AuthController::class, 'logout'])->middleware('auth:api');
+});
+
+// Мощности котлов (boilers_capacity) — CRUD (требует JWT)
+Route::middleware('auth:api')->group(function () {
+    Route::get('boilers-capacity', [BoilerCapacityController::class, 'index']);
+    Route::post('boilers-capacity', [BoilerCapacityController::class, 'store']);
+    Route::put('boilers-capacity/{boilers_capacity}', [BoilerCapacityController::class, 'update']);
+    Route::delete('boilers-capacity/{boilers_capacity}', [BoilerCapacityController::class, 'destroy']);
+
+    // Материалы
+    Route::get('materials', [MaterialController::class, 'index']);
+    Route::post('materials', [MaterialController::class, 'store']);
+    Route::put('materials/{material}', [MaterialController::class, 'update']);
+    Route::delete('materials/{material}', [MaterialController::class, 'destroy']);
 });
 
 
