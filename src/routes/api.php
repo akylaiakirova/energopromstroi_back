@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BoilerCapacityController;
 use App\Http\Controllers\MaterialController;
+use App\Http\Controllers\ClientController;
 
 /*
 |--------------------------------------------------------------------------
@@ -49,6 +50,12 @@ Route::middleware('auth:api')->group(function () {
     Route::post('materials', [MaterialController::class, 'store']);
     Route::put('materials/{material}', [MaterialController::class, 'update']);
     Route::delete('materials/{material}', [MaterialController::class, 'destroy']);
+
+    // Клиенты
+    Route::get('clients', [ClientController::class, 'index']);
+    Route::post('clients', [ClientController::class, 'store']);
+    Route::put('clients/{client}', [ClientController::class, 'update']);
+    Route::delete('clients/{client}', [ClientController::class, 'destroy']);
 });
 
 

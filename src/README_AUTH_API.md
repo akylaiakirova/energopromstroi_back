@@ -160,3 +160,53 @@
 Примечания:
 - `materials_arrival`, `stocks_balance`, `write_off` используют `material_id`.
 - Для массовых операций с материалами в рамках конвертации используется `conversion_materials`.
+
+---------------------------------------------------------------------------
+
+# REST API — Клиенты (clients)
+Все эндпоинты требуют заголовок `Authorization: Bearer <token>`.
+
+## Получить список клиентов
+- Метод: `GET /clients`
+- Сортировка: по полю `name` по возрастанию
+- Ответ `200`: массив объектов
+```json
+[
+  { "id": 1, "name": "ООО Ромашка", "email": "info@romashka.kz", "phone": "77001234567", "whatsapp": null, "telegram": null, "note": null, "createAt": "2025-09-14T10:00:00Z", "updatedAt": null }
+]
+```
+
+## Создать клиента
+- Метод: `POST /clients`
+- Тело запроса (JSON):
+  - `name` (string, required)
+  - `email` (string, optional, email)
+  - `phone` (string, required, только цифры)
+  - `whatsapp` (string, optional)
+  - `telegram` (string, optional)
+  - `note` (string, optional)
+- Успешный ответ `201`: созданный объект
+```json
+{ "id": 2, "name": "ТОО Василёк", "email": "contact@vasilek.kz", "phone": "77007654321", "whatsapp": "77007654321", "telegram": "@vasilek", "note": "VIP", "createAt": "2025-09-14T10:10:00Z", "updatedAt": null }
+```
+
+## Обновить клиента
+- Метод: `PUT /clients/{id}`
+- Тело запроса (JSON):
+  - `name` (string, required)
+  - `email` (string, optional, email)
+  - `phone` (string, required, только цифры)
+  - `whatsapp` (string, optional)
+  - `telegram` (string, optional)
+  - `note` (string, optional)
+- Ответ `200`: обновлённый объект
+```json
+{ "id": 2, "name": "ТОО Василёк+", "email": "office@vasilek.kz", "phone": "77007654321", "whatsapp": "77007654321", "telegram": "@vasilek", "note": "Стратегический клиент", "createAt": "2025-09-14T10:10:00Z", "updatedAt": "2025-09-14T10:20:00Z" }
+```
+
+## Удалить клиента
+- Метод: `DELETE /clients/{id}`
+- Ответ `200`:
+```json
+{ "message": "Удалено" }
+```
