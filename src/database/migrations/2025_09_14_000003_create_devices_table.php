@@ -34,12 +34,15 @@ return new class extends Migration
             $table->string('device_os')->nullable();
             $table->string('fcm_token')->nullable();
 
-            // Токены. Access-токен (JWT) может быть достаточно длинным
-            $table->text('token')->nullable(false);
-            $table->text('refresh_token')->nullable();
+            // Refresh-токен (храним только хеш), срок действия, флаги
+            $table->text('refresh_token_hash')->nullable();
+            $table->dateTime('refresh_token_expires_at')->nullable();
+            $table->boolean('revoked')->default(false);
 
             // Сеансовые и системные метаданные
             $table->dateTime('last_session_date_time')->nullable(false);
+            $table->string('last_ip')->nullable();
+            $table->text('user_agent')->nullable();
 
             // Явные timestamps под требования ТЗ
             $table->timestamp('createdAt')->nullable(false)->useCurrent();

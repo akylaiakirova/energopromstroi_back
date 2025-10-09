@@ -18,7 +18,7 @@ return new class extends Migration
                 ->after('id')
                 ->constrained('roles')
                 ->cascadeOnUpdate()
-                ->cascadeOnDelete();
+                ->cascadeOnDelete()->comment('1 админ, 2 офис-админ, 3 офис, 4 сварщик');
 
             // Должность
             $table->string('position')->nullable(false)->default('')->comment('Должность')->after('role_id');
@@ -27,7 +27,7 @@ return new class extends Migration
             $table->string('surname')->nullable()->comment('Фамилия')->after('name');
 
             // Контакты
-            $table->string('phone')->nullable(false)->after('email');
+            $table->string('phone')->nullable()->after('email');
             $table->string('whatsapp')->nullable()->after('phone');
             $table->string('telegram')->nullable()->after('whatsapp');
 

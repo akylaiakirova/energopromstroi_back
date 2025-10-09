@@ -5,6 +5,9 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BoilerCapacityController;
 use App\Http\Controllers\MaterialController;
 use App\Http\Controllers\ClientController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\UserBankController;
+use App\Http\Controllers\TemplateDocumentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -56,6 +59,24 @@ Route::middleware('auth:api')->group(function () {
     Route::post('clients', [ClientController::class, 'store']);
     Route::put('clients/{client}', [ClientController::class, 'update']);
     Route::delete('clients/{client}', [ClientController::class, 'destroy']);
+
+    // Сотрудники (users)
+    Route::get('users', [UserController::class, 'index']);
+    Route::post('users', [UserController::class, 'store']);
+    Route::put('users/{user}', [UserController::class, 'update']);
+    Route::delete('users/{user}', [UserController::class, 'destroy']);
+
+    // Реквизиты сотрудников (user_banks)
+    Route::get('user-banks', [UserBankController::class, 'index']);
+    Route::post('user-banks', [UserBankController::class, 'store']);
+    Route::put('user-banks/{user_bank}', [UserBankController::class, 'update']);
+    Route::delete('user-banks/{user_bank}', [UserBankController::class, 'destroy']);
+
+    // Шаблоны документов (templates_document)
+    Route::get('templates-document', [TemplateDocumentController::class, 'index']);
+    Route::post('templates-document', [TemplateDocumentController::class, 'store']);
+    Route::put('templates-document/{templates_document}', [TemplateDocumentController::class, 'update']);
+    Route::delete('templates-document/{templates_document}', [TemplateDocumentController::class, 'destroy']);
 });
 
 

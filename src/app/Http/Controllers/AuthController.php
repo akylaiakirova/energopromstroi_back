@@ -41,6 +41,13 @@ class AuthController extends Controller
             return response()->json(['message' => 'Неверные учетные данные'], 401);
         }
 
+        // Проверяем, имеет ли пользователь доступ в систему
+        $user = auth('api')->user();
+        if (! $user || ! $user->has_access) {
+            auth('api')->logout();
+            return response()->json(['message' => 'Доступ для этого пользователя отключен'], 403);
+        }
+
         return response()->json([
             'access_token' => $token,
             'token_type' => 'bearer',
