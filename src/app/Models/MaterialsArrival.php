@@ -15,6 +15,14 @@ class MaterialsArrival extends Model
     public const UPDATED_AT = 'updatedAt';
 
     protected $guarded = [];
+
+    protected $casts = [
+        'material_id' => 'integer',
+        'count' => 'integer',
+        'price_for_1' => 'decimal:2',
+        'total_price' => 'decimal:2',
+        'supplier_id' => 'integer',
+    ];
 }
 
 

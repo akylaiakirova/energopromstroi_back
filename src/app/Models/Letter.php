@@ -15,6 +15,10 @@ class Letter extends Model
     public const UPDATED_AT = 'updatedAt';
 
     protected $guarded = [];
+
+    protected $casts = [
+        'files' => 'array',
+    ];
 }
 
 

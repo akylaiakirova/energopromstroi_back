@@ -15,6 +15,12 @@ class BoilerPassport extends Model
     public const UPDATED_AT = 'updatedAt';
 
     protected $guarded = [];
+
+    protected $casts = [
+        'boiler_capacity_id' => 'integer',
+        'files' => 'array',
+        'date' => 'datetime',
+    ];
 }
 
 

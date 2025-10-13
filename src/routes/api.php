@@ -8,6 +8,13 @@ use App\Http\Controllers\ClientController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserBankController;
 use App\Http\Controllers\TemplateDocumentController;
+use App\Http\Controllers\TemplatePaymentController;
+use App\Http\Controllers\LettersController;
+use App\Http\Controllers\BoilerPassportsController;
+use App\Http\Controllers\ContractController;
+use App\Http\Controllers\SupplierController;
+use App\Http\Controllers\MaterialsArrivalController;
+use App\Models\StockBalance;
 
 /*
 |--------------------------------------------------------------------------
@@ -77,6 +84,47 @@ Route::middleware('auth:api')->group(function () {
     Route::post('templates-document', [TemplateDocumentController::class, 'store']);
     Route::put('templates-document/{templates_document}', [TemplateDocumentController::class, 'update']);
     Route::delete('templates-document/{templates_document}', [TemplateDocumentController::class, 'destroy']);
+
+    // Шаблоны платежей (templates_payment)
+    Route::get('templates-payment', [TemplatePaymentController::class, 'index']);
+    Route::post('templates-payment', [TemplatePaymentController::class, 'store']);
+    Route::put('templates-payment/{templates_payment}', [TemplatePaymentController::class, 'update']);
+    Route::delete('templates-payment/{templates_payment}', [TemplatePaymentController::class, 'destroy']);
+
+    // Письма (letters)
+    Route::get('letters', [LettersController::class, 'index']);
+    Route::post('letters', [LettersController::class, 'store']);
+    Route::put('letters/{letter}', [LettersController::class, 'update']);
+    Route::delete('letters/{letter}', [LettersController::class, 'destroy']);
+
+    // Паспорта котлов (boiler_passports)
+    Route::get('boiler-passports', [BoilerPassportsController::class, 'index']);
+    Route::post('boiler-passports', [BoilerPassportsController::class, 'store']);
+    Route::put('boiler-passports/{boiler_passport}', [BoilerPassportsController::class, 'update']);
+    Route::delete('boiler-passports/{boiler_passport}', [BoilerPassportsController::class, 'destroy']);
+
+    // Договоры (contracts)
+    Route::get('contracts', [ContractController::class, 'index']);
+    Route::post('contracts', [ContractController::class, 'store']);
+    Route::put('contracts/{contract}', [ContractController::class, 'update']);
+    Route::delete('contracts/{contract}', [ContractController::class, 'destroy']);
+
+    // Поставщики (suppliers)
+    Route::get('suppliers', [SupplierController::class, 'index']);
+    Route::post('suppliers', [SupplierController::class, 'store']);
+    Route::put('suppliers/{supplier}', [SupplierController::class, 'update']);
+    Route::delete('suppliers/{supplier}', [SupplierController::class, 'destroy']);
+
+    // Поступление материалов (materials_arrival)
+    Route::get('materials-arrival', [MaterialsArrivalController::class, 'index']);
+    Route::post('materials-arrival', [MaterialsArrivalController::class, 'store']);
+    Route::put('materials-arrival/{materials_arrival}', [MaterialsArrivalController::class, 'update']);
+    Route::delete('materials-arrival/{materials_arrival}', [MaterialsArrivalController::class, 'destroy']);
+
+    // Остаток материалов (stocks_balance) — только чтение
+    Route::get('stocks-balance', function () {
+        return StockBalance::orderBy('material_id')->get();
+    });
 });
 
 
