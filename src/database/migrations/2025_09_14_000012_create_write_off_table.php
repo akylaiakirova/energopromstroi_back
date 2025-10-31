@@ -13,6 +13,7 @@ return new class extends Migration
             $table->foreignId('material_id')->constrained('materials')->cascadeOnUpdate()->cascadeOnDelete();
             $table->unsignedInteger('count');
             $table->decimal('price_for_1', 12, 2)->nullable();
+            $table->string('note')->nullable();
             $table->timestamp('createAt')->useCurrent();
             $table->timestamp('updatedAt')->nullable()->useCurrentOnUpdate();
         });

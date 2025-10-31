@@ -14,6 +14,10 @@ use App\Http\Controllers\BoilerPassportsController;
 use App\Http\Controllers\ContractController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\MaterialsArrivalController;
+use App\Http\Controllers\StockBalanceController;
+use App\Http\Controllers\WriteOffController;
+use App\Http\Controllers\CashTypeController;
+use App\Http\Controllers\CashboxController;
 use App\Models\StockBalance;
 
 /*
@@ -122,9 +126,19 @@ Route::middleware('auth:api')->group(function () {
     Route::delete('materials-arrival/{materials_arrival}', [MaterialsArrivalController::class, 'destroy']);
 
     // Остаток материалов (stocks_balance) — только чтение
-    Route::get('stocks-balance', function () {
-        return StockBalance::orderBy('material_id')->get();
-    });
+    Route::get('stocks-balance', [StockBalanceController::class, 'index']);
+    // Списание материалов (write_off)
+    Route::post('stocks-balance/write-off', [StockBalanceController::class, 'whiteOff']);
+    Route::get('write-off', [WriteOffController::class, 'index']);
+
+    // Типы доходов/расходов (cash_types)
+    Route::get('cash-types', [CashTypeController::class, 'index']);
+
+    // Касса (cashbox)
+    Route::get('cashbox', [CashboxController::class, 'index']);
+    Route::post('cashbox', [CashboxController::class, 'store']);
+    Route::put('cashbox/{cashbox}', [CashboxController::class, 'update']);
+    Route::delete('cashbox/{cashbox}', [CashboxController::class, 'destroy']);
 });
 
 

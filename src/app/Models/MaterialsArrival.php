@@ -23,6 +23,18 @@ class MaterialsArrival extends Model
         'total_price' => 'decimal:2',
         'supplier_id' => 'integer',
     ];
+
+    /** Relation to material */
+    public function material()
+    {
+        return $this->belongsTo(Material::class, 'material_id');
+    }
+
+    /** Relation to supplier */
+    public function supplier()
+    {
+        return $this->belongsTo(Supplier::class, 'supplier_id');
+    }
 }
 
 

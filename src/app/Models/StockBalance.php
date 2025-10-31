@@ -15,6 +15,14 @@ class StockBalance extends Model
     public const UPDATED_AT = 'updatedAt';
 
     protected $guarded = [];
+
+    /**
+     * Связь с материалом.
+     */
+    public function material()
+    {
+        return $this->belongsTo(Material::class, 'material_id');
+    }
 }
 
 

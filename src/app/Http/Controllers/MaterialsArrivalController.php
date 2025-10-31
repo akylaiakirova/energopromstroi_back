@@ -15,7 +15,11 @@ class MaterialsArrivalController extends Controller
     /** Список поступлений по id DESC. */
     public function index()
     {
-        return MaterialsArrival::orderBy('id', 'desc')->get();
+        $items = MaterialsArrival::with(['material', 'supplier'])
+            ->orderBy('id', 'desc')
+            ->get();
+
+        return $items;
     }
 
     /** Создать поступление. total_price можно прислать или вычислим как count * price_for_1. */
@@ -68,8 +72,26 @@ class MaterialsArrivalController extends Controller
     /** Удалить поступление. */
     public function destroy(MaterialsArrival $materials_arrival)
     {
-        $materials_arrival->delete();
-        return response()->json(['message' => 'Удалено']);
+        $result = DB::transaction(function () use ($materials_arrival) {
+            // Уменьшаем остаток материалов
+            $balance = StockBalance::firstOrCreate(
+                ['material_id' => $materials_arrival->material_id],
+                ['count' => 0]
+            );
+
+            $balance->count = (int) $balance->count - (int) $materials_arrival->count;
+            if ($balance->count < 0) {
+                // Не позволяем уйти в минус — откатываем транзакцию и возвращаем ошибку
+                abort(422, 'Удаление поступления привело бы к отрицательному остатку материалов');
+            }
+            $balance->save();
+
+            $materials_arrival->delete();
+
+            return ['message' => 'Удалено'];
+        });
+
+        return response()->json($result);
     }
 }
 

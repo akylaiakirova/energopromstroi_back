@@ -34,5 +34,24 @@ class DatabaseSeeder extends Seeder
                 'updatedAt' => now(),
             ]
         );
+
+        // Тестовый администратор
+        DB::table('users')->updateOrInsert(
+            ['email' => 'test@bukefal.com'],
+            [
+                'role_id' => $roleId,
+                'position' => 'Администратор',
+                'name' => 'Тариел',
+                'surname' => 'Жолдошов',
+                'phone' => '+996507303311',
+                'password' => Hash::make('qweqwe123'),
+                'has_access' => true,
+                'createAt' => now(),
+                'updatedAt' => now(),
+            ]
+        );
+
+        // Типы доходов/расходов
+        $this->call(CashTypesSeeder::class);
     }
 }
