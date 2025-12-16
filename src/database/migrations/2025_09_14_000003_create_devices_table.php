@@ -20,7 +20,7 @@ return new class extends Migration
     {
         Schema::create('devices', function (Blueprint $table) {
             // PK
-            $table->id()->comment('устройства пользователей');
+            $table->id()->comment('сотрудники/устройства пользователей');
 
             // Связь на пользователя
             $table->foreignId('user_id')

@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('boilers_capacity', function (Blueprint $table) {
-            $table->id()->comment('мощности котлов');
+            $table->id()->comment('база/мощности котлов');
             $table->string('name');
             $table->timestamp('createAt')->useCurrent();
             $table->timestamp('updatedAt')->nullable()->useCurrentOnUpdate();

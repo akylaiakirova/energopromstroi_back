@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('stocks_balance', function (Blueprint $table) {
-            $table->id()->comment('остаток материалов');
+            $table->id()->comment('склад/остаток материалов');
             $table->foreignId('material_id')->constrained('materials')->cascadeOnUpdate()->cascadeOnDelete();
             $table->unsignedInteger('count');
             $table->timestamp('createAt')->useCurrent();

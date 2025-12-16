@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ConversionMaterial extends Model
 {
@@ -11,9 +12,21 @@ class ConversionMaterial extends Model
 
     protected $table = 'conversion_materials';
 
-    public $timestamps = false;
+    public const CREATED_AT = 'createAt';
+    public const UPDATED_AT = 'updateAt';
 
     protected $guarded = [];
+
+    public function conversion(): BelongsTo
+    {
+        return $this->belongsTo(Conversion::class, 'conversions_id');
+    }
+
+    public function material(): BelongsTo
+    {
+        return $this->belongsTo(Material::class, 'material_id');
+    }
 }
+
 
 

@@ -18,6 +18,8 @@ use App\Http\Controllers\StockBalanceController;
 use App\Http\Controllers\WriteOffController;
 use App\Http\Controllers\CashTypeController;
 use App\Http\Controllers\CashboxController;
+use App\Http\Controllers\MaterialsConsumptionController;
+use App\Http\Controllers\ConversionsController;
 use App\Models\StockBalance;
 
 /*
@@ -125,6 +127,21 @@ Route::middleware('auth:api')->group(function () {
     Route::put('materials-arrival/{materials_arrival}', [MaterialsArrivalController::class, 'update']);
     Route::delete('materials-arrival/{materials_arrival}', [MaterialsArrivalController::class, 'destroy']);
 
+    // Нормативный расход материалов (materials_consumption)
+    Route::get('materials-consumption', [MaterialsConsumptionController::class, 'index']);
+    Route::post('materials-consumption', [MaterialsConsumptionController::class, 'store']);
+    Route::put('materials-consumption/{materials_consumption}', [MaterialsConsumptionController::class, 'update']);
+    Route::delete('materials-consumption/{materials_consumption}', [MaterialsConsumptionController::class, 'destroy']);
+
+    // Конвертации и связанные материалы (conversions + conversion_materials)
+    Route::get('conversions', [ConversionsController::class, 'index']);
+    Route::post('conversions', [ConversionsController::class, 'store']);
+    Route::put('conversions/materials/{id}', [ConversionsController::class, 'updateConversionMaterial']);
+    Route::put('conversions/{id}/responsible-user', [ConversionsController::class, 'updateResponsibleUser']);
+    Route::post('conversions/{id}/finish', [ConversionsController::class, 'finishConversion']);
+    Route::delete('conversions/{id}', [ConversionsController::class, 'deleteConversionsId']);
+    Route::delete('conversions/materials/{id}', [ConversionsController::class, 'conversionMaterialId']);
+    
     // Остаток материалов (stocks_balance) — только чтение
     Route::get('stocks-balance', [StockBalanceController::class, 'index']);
     // Списание материалов (write_off)

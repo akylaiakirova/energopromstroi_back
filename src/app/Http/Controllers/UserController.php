@@ -26,8 +26,8 @@ class UserController extends Controller
             'position' => ['required', 'string', 'max:255'],
             'name' => ['required', 'string', 'max:255'],
             'surname' => ['nullable', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
-            'phone' => ['required', 'string', 'max:255', 'regex:/^\d+$/'],
+            'email' => ['nullable', 'string', 'email', 'max:255', 'unique:users,email'],
+            'phone' => ['nullable', 'string', 'max:255', 'regex:/^\d+$/'],
             'whatsapp' => ['nullable', 'string', 'max:255'],
             'telegram' => ['nullable', 'string', 'max:255'],
             'passport_number' => ['nullable', 'string', 'max:255'],
@@ -45,9 +45,14 @@ class UserController extends Controller
             $data['role_id'] = 3;
         }
 
-        // Если у сотрудника есть доступ, пароль обязателен
-        if ($request->boolean('has_access') && empty($data['password'])) {
-            return response()->json(['message' => 'Пароль обязателен для сотрудников с доступом (has_access=true)'], 422);
+        // Если у сотрудника есть доступ, email и пароль обязательны
+        if ($request->boolean('has_access')) {
+            if (empty($data['email'])) {
+                return response()->json(['message' => 'Email обязателен для сотрудников с доступом (has_access=true)'], 422);
+            }
+            if (empty($data['password'])) {
+                return response()->json(['message' => 'Пароль обязателен для сотрудников с доступом (has_access=true)'], 422);
+            }
         }
 
         if (! empty($data['password'])) {
@@ -85,6 +90,18 @@ class UserController extends Controller
         // role_id по умолчанию = 3, если не пришёл
         if (! array_key_exists('role_id', $data) || is_null($data['role_id'])) {
             $data['role_id'] = 3;
+        }
+
+        // Определяем конечное значение доступа
+        $finalHasAccess = $request->has('has_access') ? $request->boolean('has_access') : (bool) $user->has_access;
+
+        // Если конечное значение доступа true — email обязателен (либо в запросе, либо уже сохранён у пользователя)
+        if ($finalHasAccess) {
+            $emailFromRequest = $data['email'] ?? null;
+            $emailFinal = $emailFromRequest ?? $user->email;
+            if (empty($emailFinal)) {
+                return response()->json(['message' => 'Email обязателен для сотрудников с доступом (has_access=true)'], 422);
+            }
         }
 
         // Если became has_access=true и пароль пуст — ошибку

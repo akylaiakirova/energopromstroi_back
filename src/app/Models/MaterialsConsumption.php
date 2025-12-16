@@ -5,16 +5,15 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Conversion extends Model
+class MaterialsConsumption extends Model
 {
     use HasFactory;
 
-    protected $table = 'conversions';
+    protected $table = 'materials_consumption';
 
     public const CREATED_AT = 'createAt';
-    public const UPDATED_AT = null; // нет updatedAt
+    public const UPDATED_AT = 'updatedAt';
 
     protected $guarded = [];
 
@@ -23,15 +22,9 @@ class Conversion extends Model
         return $this->belongsTo(BoilerCapacity::class, 'boiler_capacity_id');
     }
 
-    public function responsibleUser(): BelongsTo
+    public function material(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'responsible_user_id');
-    }
-
-    public function materials(): HasMany
-    {
-        return $this->hasMany(ConversionMaterial::class, 'conversions_id');
+        return $this->belongsTo(Material::class, 'material_id');
     }
 }
-
 

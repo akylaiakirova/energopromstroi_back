@@ -13,7 +13,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('materials', function (Blueprint $table) {
-            $table->id()->comment('материалы');
+            $table->id()->comment('база/материалы');
             $table->string('name');
             $table->string('unit');
             $table->timestamp('createAt')->useCurrent();

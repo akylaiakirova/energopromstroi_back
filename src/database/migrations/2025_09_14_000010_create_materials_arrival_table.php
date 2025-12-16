@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('materials_arrival', function (Blueprint $table) {
-            $table->id()->comment('поступление материалов');
+            $table->id()->comment('склад/поступление материалов');
             $table->foreignId('material_id')->constrained('materials')->cascadeOnUpdate()->cascadeOnDelete();
             $table->unsignedInteger('count');
             $table->decimal('price_for_1', 12, 2);

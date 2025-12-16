@@ -14,7 +14,7 @@ return new class extends Migration
     {
         Schema::create('user_banks', function (Blueprint $table) {
             // PK
-            $table->id()->comment('реквизиты сотрудников');
+            $table->id()->comment('сотрудники/и их реквизиты');
 
             // FK на users
             $table->foreignId('user_id')

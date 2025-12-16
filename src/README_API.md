@@ -1147,3 +1147,189 @@
 Примечания:
 - Таблица: `cashbox` (см. миграцию).
 - Модель: `App\\Models\\Cashbox`.
+
+---------------------------------------------------------------------------
+
+# 👉 REST API — Нормативный расход материалов (materials_consumption)
+Все эндпоинты требуют заголовок `Authorization: Bearer <token>`.
+
+Поля сущности:
+- `boiler_capacity_id` (int) — ссылка на `boilers_capacity.id`
+- `material_id` (int) — ссылка на `materials.id`
+- `countStandard` (int) — нормативное количество
+
+## Получить список норм расхода
+- Метод: `GET /materials-consumption`
+- Параметры запроса (query):
+  - `boiler_capacity_id` (int, optional)
+  - `material_id` (int, optional)
+- Сортировка: по полю `id` по убыванию
+- Ответ `200`: массив объектов с присоединёнными связями `boiler_capacity` и `material`
+```json
+[
+  {
+    "id": 1,
+    "boiler_capacity_id": 2,
+    "material_id": 3,
+    "countStandard": 4,
+    "createAt": "2025-09-14T10:10:00Z",
+    "updatedAt": null,
+    "boiler_capacity": { "id": 2, "name": "20 кВт" },
+    "material": { "id": 3, "name": "Сталь C", "unit": "кг" }
+  }
+]
+```
+
+## Создать норму расхода
+- Метод: `POST /materials-consumption`
+- Тело запроса (JSON):
+  - `boiler_capacity_id` (int, required, exists: boilers_capacity.id)
+  - `material_id` (int, required, exists: materials.id)
+  - `countStandard` (int, required, min 0)
+- Успешный ответ `201`: созданный объект (со связями)
+```json
+{
+  "id": 5,
+  "boiler_capacity_id": 2,
+  "material_id": 3,
+  "countStandard": 6,
+  "createAt": "2025-09-14T11:15:00Z",
+  "updatedAt": null,
+  "boiler_capacity": { "id": 2, "name": "20 кВт" },
+  "material": { "id": 3, "name": "Сталь C", "unit": "кг" }
+}
+```
+
+## Обновить норму расхода
+- Метод: `PUT /materials-consumption/{id}`
+- Тело запроса (JSON): те же поля, что и при создании
+- Ответ `200`: обновлённый объект (со связями)
+
+## Удалить норму расхода
+- Метод: `DELETE /materials-consumption/{id}`
+- Ответ `200`:
+```json
+{ "message": "Удалено" }
+```
+
+Примечания:
+- Таблица: `materials_consumption` (см. миграцию).
+- Модель: `App\\Models\\MaterialsConsumption`.
+- В выборке `index` подгружаются связи `boiler_capacity` и `material`.
+
+---------------------------------------------------------------------------
+
+# 👉 REST API — Конвертации (conversions) и материалы конвертации (conversion_materials)
+Все эндпоинты требуют заголовок `Authorization: Bearer <token>`.
+
+Поля сущности conversions:
+- `boiler_capacity_id` (int|null) — ссылка на `boilers_capacity.id`
+- `responsible_user_id` (int) — ссылка на `users.id`
+- `note` (string|null)
+- `createAt` (datetime)
+- `finishAt` (datetime|null)
+
+Поля сущности conversion_materials:
+- `conversions_id` (int) — ссылка на `conversions.id`
+- `material_id` (int) — ссылка на `materials.id`
+- `countStandard` (int)
+- `countFact` (int)
+- `createAt` (datetime)
+- `updateAt` (datetime|null)
+
+## Индекс (сводная выборка)
+- Метод: `GET /conversions`
+- Описание: возвращает объект с двумя массивами:
+  - `materials_consumption`: все записи в короткой форме
+  - `conversions`: массив конвертаций, каждая — с вложенным `conversion_materials`
+- Ответ `200`:
+```json
+{
+  "materials_consumption": [
+    {
+      "boiler_capacity_id": 1,
+      "material_id": 1,
+      "countStandard": 100,
+      "createAt": "2025-01-01 12:00:00",
+      "updatedAt": "2025-01-01 12:00:00"
+    }
+  ],
+  "conversions": [
+    {
+      "id": 10,
+      "boiler_capacity_id": 1,
+      "responsible_user_id": 1,
+      "note": "конвертация 1",
+      "finishAt": null,
+      "conversion_materials": [
+        {
+          "id": 100,
+          "conversions_id": 10,
+          "material_id": 1,
+          "countStandard": 100,
+          "countFact": 100,
+          "createAt": "2025-01-01 12:00:00",
+          "updateAt": "2025-01-01 12:00:00"
+        }
+      ]
+    }
+  ]
+}
+```
+
+## Создать конвертацию с материалами
+- Метод: `POST /conversions`
+- Тело запроса (JSON):
+```json
+{
+  "boiler_capacity_id": 1,
+  "responsible_user_id": 1,
+  "note": "конвертация 1",
+  "conversion_materials": [
+    { "material_id": 1, "countStandard": 100, "countFact": 100 },
+    { "material_id": 2, "countStandard": 200, "countFact": 200 }
+  ]
+}
+```
+- Успешный ответ `201`: созданная конвертация с массивом `conversion_materials`.
+
+## Обновить одну запись материалов конвертации
+- Метод: `PUT /conversions/materials/{id}`
+- Тело запроса (JSON) — любые поля из:
+  - `material_id` (int)
+  - `countStandard` (int)
+  - `countFact` (int)
+  - `createAt` (datetime)
+  - `updateAt` (datetime)
+- Ответ `200`: обновлённая запись `conversion_materials`.
+
+## Сменить ответственного пользователя
+- Метод: `PUT /conversions/{id}/responsible-user`
+- Тело запроса (JSON):
+  - `responsible_user_id` (int, required, exists: users.id)
+- Ответ `200`: обновлённая конвертация.
+
+## Завершить конвертацию
+- Метод: `POST /conversions/{id}/finish`
+- Поведение: выставляет текущее серверное время в `finishAt`.
+- Ответ `200`: обновлённая конвертация.
+
+## Удалить конвертацию (с каскадом материалов)
+- Метод: `DELETE /conversions/{id}`
+- Поведение: удаляет запись из `conversions`; связанные `conversion_materials` удаляются каскадом.
+- Ответ `200`:
+```json
+{ "message": "Удалено" }
+```
+
+## Удалить одну запись из conversion_materials
+- Метод: `DELETE /conversions/materials/{id}`
+- Ответ `200`:
+```json
+{ "message": "Удалено" }
+```
+
+Примечания:
+- Таблицы: `conversions`, `conversion_materials` (см. миграции).
+- Модели: `App\\Models\\Conversion`, `App\\Models\\ConversionMaterial`.
+- Эндпоинт индекса возвращает удобную сводку для фронта: нормы расхода и список конвертаций с деталями.
