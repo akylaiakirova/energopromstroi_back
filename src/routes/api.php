@@ -20,6 +20,7 @@ use App\Http\Controllers\CashTypeController;
 use App\Http\Controllers\CashboxController;
 use App\Http\Controllers\MaterialsConsumptionController;
 use App\Http\Controllers\ConversionsController;
+use App\Http\Controllers\BoilerReadyController;
 use App\Models\StockBalance;
 
 /*
@@ -142,6 +143,9 @@ Route::middleware('auth:api')->group(function () {
     Route::delete('conversions/{id}', [ConversionsController::class, 'deleteConversionsId']);
     Route::delete('conversions/materials/{id}', [ConversionsController::class, 'conversionMaterialId']);
     
+    // Готовые котлы (boilers_ready) — сводка
+    Route::get('boilers-ready/summary', [BoilerReadyController::class, 'summary']);
+
     // Остаток материалов (stocks_balance) — только чтение
     Route::get('stocks-balance', [StockBalanceController::class, 'index']);
     // Списание материалов (write_off)

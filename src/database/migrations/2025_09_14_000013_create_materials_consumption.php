@@ -12,7 +12,7 @@ return new class extends Migration
             $table->id()->comment('склад/расход материалов - просто норматив, сколько материалов обычно затрачивается на какой либо котел');
             $table->foreignId('boiler_capacity_id')->constrained('boilers_capacity')->cascadeOnUpdate()->cascadeOnDelete();
             $table->foreignId('material_id')->constrained('materials')->cascadeOnUpdate()->cascadeOnDelete();
-            $table->unsignedInteger('countStandard');
+            $table->decimal('countStandard', 12, 3);
             $table->timestamp('createAt')->useCurrent();
             $table->timestamp('updatedAt')->nullable()->useCurrentOnUpdate();
         });

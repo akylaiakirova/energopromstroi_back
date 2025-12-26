@@ -17,6 +17,10 @@ class MaterialsConsumption extends Model
 
     protected $guarded = [];
 
+    protected $casts = [
+        'countStandard' => 'decimal:3',
+    ];
+
     public function boilerCapacity(): BelongsTo
     {
         return $this->belongsTo(BoilerCapacity::class, 'boiler_capacity_id');

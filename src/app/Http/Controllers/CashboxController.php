@@ -58,7 +58,7 @@ class CashboxController extends Controller
                 // basic limits
                 $maxFiles = 10;
                 $maxSize = 50 * 1024 * 1024; // 50MB
-                $allowedExt = ['pdf', 'doc', 'docx', 'jpg', 'jpeg', 'png'];
+                $allowedExt = ['pdf', 'doc', 'docx', 'xls', 'xlsx', 'jpg', 'jpeg', 'png'];
                 if (count($uploadedFiles) > $maxFiles) {
                     return response()->json(['error' => 'Too many files', 'max' => $maxFiles], 422);
                 }
@@ -153,7 +153,7 @@ class CashboxController extends Controller
             if (!empty($uploadedFiles)) {
                 $maxFiles = 10;
                 $maxSize = 50 * 1024 * 1024; // 50MB
-                $allowedExt = ['pdf', 'doc', 'docx', 'jpg', 'jpeg', 'png'];
+                $allowedExt = ['pdf', 'doc', 'docx', 'xls', 'xlsx', 'jpg', 'jpeg', 'png'];
                 if (count($uploadedFiles) > $maxFiles) {
                     return response()->json(['error' => 'Too many files', 'max' => $maxFiles], 422);
                 }

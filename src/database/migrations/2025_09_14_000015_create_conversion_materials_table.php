@@ -16,8 +16,8 @@ return new class extends Migration
             $table->id()->comment('склад/конвертация/конвертация материалов в дополнение к таблице conversions');
             $table->foreignId('conversions_id')->constrained('conversions')->cascadeOnUpdate()->cascadeOnDelete();
             $table->foreignId('material_id')->constrained('materials')->cascadeOnUpdate()->cascadeOnDelete();
-            $table->unsignedInteger('countStandard')->comment('нормативный расход материалов');
-            $table->unsignedInteger('countFact')->comment('фактический расход материалов');
+            $table->decimal('countStandard', 12, 3)->comment('нормативный расход материалов');
+            $table->decimal('countFact', 12, 3)->comment('фактический расход материалов');
             $table->timestamp('createAt')->useCurrent()->comment('дата и время когда выдали мастеру данный материал');
             $table->timestamp('updateAt')->nullable()->comment('запись была отредактирована в это время');
         });

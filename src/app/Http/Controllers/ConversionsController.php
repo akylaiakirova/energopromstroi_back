@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Conversion;
 use App\Models\ConversionMaterial;
+use App\Models\BoilerReady;
 use App\Models\MaterialsConsumption;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -77,8 +78,8 @@ class ConversionsController extends Controller
             'note' => ['nullable', 'string'],
             'conversion_materials' => ['required', 'array', 'min:1'],
             'conversion_materials.*.material_id' => ['required', 'integer', 'exists:materials,id'],
-            'conversion_materials.*.countStandard' => ['required', 'integer', 'min:0'],
-            'conversion_materials.*.countFact' => ['required', 'integer', 'min:0'],
+            'conversion_materials.*.countStandard' => ['required', 'numeric', 'min:0'],
+            'conversion_materials.*.countFact' => ['required', 'numeric', 'min:0'],
             'conversion_materials.*.createAt' => ['nullable', 'date'],
             'conversion_materials.*.updateAt' => ['nullable', 'date'],
         ]);
@@ -134,8 +135,8 @@ class ConversionsController extends Controller
 
         $data = $request->validate([
             'material_id' => ['sometimes', 'integer', 'exists:materials,id'],
-            'countStandard' => ['sometimes', 'integer', 'min:0'],
-            'countFact' => ['sometimes', 'integer', 'min:0'],
+            'countStandard' => ['sometimes', 'numeric', 'min:0'],
+            'countFact' => ['sometimes', 'numeric', 'min:0'],
             'createAt' => ['sometimes', 'date'],
             'updateAt' => ['sometimes', 'date'],
         ]);
@@ -165,11 +166,37 @@ class ConversionsController extends Controller
     /**
      * Завершить конвертацию — выставить текущее серверное время в finishAt.
      */
-    public function finishConversion(int $id)
+    public function finishConversion(Request $request, int $id)
     {
-        $conversion = Conversion::findOrFail($id);
-        $conversion->update(['finishAt' => Carbon::now()]);
-        return response()->json($conversion);
+        $data = $request->validate([
+            'boiler_capacity_id' => ['required', 'integer', 'exists:boilers_capacity,id'],
+            'responsible_user_id' => ['required', 'integer', 'exists:users,id'],
+        ]);
+
+        return DB::transaction(function () use ($id, $data) {
+            $conversion = Conversion::findOrFail($id);
+
+            if (!is_null($conversion->finishAt)) {
+                return response()->json(['message' => 'Конвертация уже завершена'], 422);
+            }
+
+            $now = Carbon::now();
+
+            $conversion->update([
+                'boiler_capacity_id' => $data['boiler_capacity_id'],
+                'responsible_user_id' => $data['responsible_user_id'],
+                'finishAt' => $now,
+            ]);
+
+            BoilerReady::create([
+                'boiler_capacity_id' => $data['boiler_capacity_id'],
+                'count' => 1,
+                'user_id' => $data['responsible_user_id'],
+                'createAt' => $now,
+            ]);
+
+            return response()->json($conversion);
+        });
     }
 
     /**

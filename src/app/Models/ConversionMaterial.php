@@ -17,6 +17,11 @@ class ConversionMaterial extends Model
 
     protected $guarded = [];
 
+    protected $casts = [
+        'countStandard' => 'decimal:3',
+        'countFact' => 'decimal:3',
+    ];
+
     public function conversion(): BelongsTo
     {
         return $this->belongsTo(Conversion::class, 'conversions_id');

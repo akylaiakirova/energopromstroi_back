@@ -13,7 +13,7 @@ class MaterialsConsumptionController extends Controller
     /** Получить список норм расхода (связи подгружаем). Фильтры по boiler_capacity_id, material_id. */
     public function index(Request $request)
     {
-        $query = MaterialsConsumption::with(['boilerCapacity', 'material'])->orderBy('id', 'desc');
+        $query = MaterialsConsumption::with(['boilerCapacity', 'material'])->orderBy('boiler_capacity_id')->orderBy('id');
 
         if ($request->filled('boiler_capacity_id')) {
             $query->where('boiler_capacity_id', (int) $request->get('boiler_capacity_id'));
@@ -22,7 +22,29 @@ class MaterialsConsumptionController extends Controller
             $query->where('material_id', (int) $request->get('material_id'));
         }
 
-        return $query->get();
+        $items = $query->get();
+
+        // Группировка по boiler_capacity_id
+        $grouped = [];
+        foreach ($items as $item) {
+            $boilerId = $item->boiler_capacity_id;
+            if (!isset($grouped[$boilerId])) {
+                $grouped[$boilerId] = [
+                    'boiler_capacity' => $item->boilerCapacity,
+                    'materials' => [],
+                ];
+            }
+            $grouped[$boilerId]['materials'][] = [
+                'id' => $item->id,
+                'material_id' => $item->material_id,
+                'countStandard' => $item->countStandard,
+                'createAt' => $item->createAt,
+                'updatedAt' => $item->updatedAt,
+                'material' => $item->material,
+            ];
+        }
+
+        return array_values($grouped);  // ← Вместо простой $query->get()
     }
 
     /** Создать норму расхода. */
@@ -31,7 +53,7 @@ class MaterialsConsumptionController extends Controller
         $data = $request->validate([
             'boiler_capacity_id' => ['required', 'integer', 'exists:boilers_capacity,id'],
             'material_id' => ['required', 'integer', 'exists:materials,id'],
-            'countStandard' => ['required', 'integer', 'min:0'],
+            'countStandard' => ['required', 'numeric', 'min:0'],
         ]);
 
         $item = MaterialsConsumption::create($data)->load(['boilerCapacity', 'material']);
@@ -44,7 +66,7 @@ class MaterialsConsumptionController extends Controller
         $data = $request->validate([
             'boiler_capacity_id' => ['required', 'integer', 'exists:boilers_capacity,id'],
             'material_id' => ['required', 'integer', 'exists:materials,id'],
-            'countStandard' => ['required', 'integer', 'min:0'],
+            'countStandard' => ['required', 'numeric', 'min:0'],
         ]);
 
         $materials_consumption->update($data);
