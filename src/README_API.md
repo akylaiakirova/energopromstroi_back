@@ -845,36 +845,96 @@
 - Ответ `200`: массив объектов
 ```json
 [
-  { "id": 1, "name": "ООО Ромашка", "email": "info@romashka.kz", "phone": "77001234567", "whatsapp": null, "telegram": null, "note": null, "createAt": "2025-09-14T10:00:00Z", "updatedAt": null }
+  {
+    "id": 1,
+    "number": "CL-0001",
+    "name": "ООО Ромашка",
+    "email": "info@romashka.kz",
+    "phone": "77001234567",
+    "whatsapp": null,
+    "telegram": null,
+    "note": null,
+    "bank": "Kaspi Bank",
+    "bank_bik": "CASPKZKA",
+    "bank_account": "KZ123456789012345678",
+    "address_legal": "г. Алматы, ул. Абая 1",
+    "address_fact": "г. Алматы, ул. Абая 1",
+    "createAt": "2025-09-14T10:00:00Z",
+    "updatedAt": null
+  }
 ]
 ```
 
 ## Создать клиента
 - Метод: `POST /clients`
 - Тело запроса (JSON):
+  - `number` (string, optional)
   - `name` (string, required)
   - `email` (string, optional, email)
   - `phone` (string, required, только цифры)
   - `whatsapp` (string, optional)
   - `telegram` (string, optional)
   - `note` (string, optional)
+  - `bank` (string, optional)
+  - `bank_bik` (string, optional)
+  - `bank_account` (string, optional)
+  - `address_legal` (string, optional)
+  - `address_fact` (string, optional)
 - Успешный ответ `201`: созданный объект
 ```json
-{ "id": 2, "name": "ТОО Василёк", "email": "contact@vasilek.kz", "phone": "77007654321", "whatsapp": "77007654321", "telegram": "@vasilek", "note": "VIP", "createAt": "2025-09-14T10:10:00Z", "updatedAt": null }
+{
+  "id": 2,
+  "number": null,
+  "name": "ТОО Василёк",
+  "email": "contact@vasilek.kz",
+  "phone": "77007654321",
+  "whatsapp": "77007654321",
+  "telegram": "@vasilek",
+  "note": "VIP",
+  "bank": null,
+  "bank_bik": null,
+  "bank_account": null,
+  "address_legal": null,
+  "address_fact": null,
+  "createAt": "2025-09-14T10:10:00Z",
+  "updatedAt": null
+}
 ```
 
 ## Обновить клиента
 - Метод: `PUT /clients/{id}`
 - Тело запроса (JSON):
+  - `number` (string, optional)
   - `name` (string, required)
   - `email` (string, optional, email)
   - `phone` (string, required, только цифры)
   - `whatsapp` (string, optional)
   - `telegram` (string, optional)
   - `note` (string, optional)
+  - `bank` (string, optional)
+  - `bank_bik` (string, optional)
+  - `bank_account` (string, optional)
+  - `address_legal` (string, optional)
+  - `address_fact` (string, optional)
 - Ответ `200`: обновлённый объект
 ```json
-{ "id": 2, "name": "ТОО Василёк+", "email": "office@vasilek.kz", "phone": "77007654321", "whatsapp": "77007654321", "telegram": "@vasilek", "note": "Стратегический клиент", "createAt": "2025-09-14T10:10:00Z", "updatedAt": "2025-09-14T10:20:00Z" }
+{
+  "id": 2,
+  "number": "CL-0002",
+  "name": "ТОО Василёк+",
+  "email": "office@vasilek.kz",
+  "phone": "77007654321",
+  "whatsapp": "77007654321",
+  "telegram": "@vasilek",
+  "note": "Стратегический клиент",
+  "bank": "Halyk Bank",
+  "bank_bik": "HSBKKZKX",
+  "bank_account": "KZ987654321098765432",
+  "address_legal": "г. Астана, пр. Абылай хана 10",
+  "address_fact": "г. Астана, пр. Абылай хана 10",
+  "createAt": "2025-09-14T10:10:00Z",
+  "updatedAt": "2025-09-14T10:20:00Z"
+}
 ```
 
 ## Удалить клиента

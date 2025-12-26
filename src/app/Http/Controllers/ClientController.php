@@ -20,12 +20,18 @@ class ClientController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
+            'number' => ['nullable', 'string', 'max:255'],
             'name' => ['required', 'string', 'max:255'],
             'email' => ['nullable', 'string', 'email', 'max:255'],
             'phone' => ['required', 'string', 'max:255', 'regex:/^\d+$/'],
             'whatsapp' => ['nullable', 'string', 'max:255'],
             'telegram' => ['nullable', 'string', 'max:255'],
             'note' => ['nullable', 'string'],
+            'bank' => ['nullable', 'string', 'max:255'],
+            'bank_bik' => ['nullable', 'string', 'max:255'],
+            'bank_account' => ['nullable', 'string', 'max:255'],
+            'address_legal' => ['nullable', 'string', 'max:255'],
+            'address_fact' => ['nullable', 'string', 'max:255'],
         ]);
 
         $item = Client::create($data);
@@ -36,12 +42,18 @@ class ClientController extends Controller
     public function update(Request $request, Client $client)
     {
         $data = $request->validate([
+            'number' => ['nullable', 'string', 'max:255'],
             'name' => ['required', 'string', 'max:255'],
             'email' => ['nullable', 'string', 'email', 'max:255'],
             'phone' => ['required', 'string', 'max:255', 'regex:/^\d+$/'],
             'whatsapp' => ['nullable', 'string', 'max:255'],
             'telegram' => ['nullable', 'string', 'max:255'],
             'note' => ['nullable', 'string'],
+            'bank' => ['nullable', 'string', 'max:255'],
+            'bank_bik' => ['nullable', 'string', 'max:255'],
+            'bank_account' => ['nullable', 'string', 'max:255'],
+            'address_legal' => ['nullable', 'string', 'max:255'],
+            'address_fact' => ['nullable', 'string', 'max:255'],
         ]);
 
         $client->update($data);
