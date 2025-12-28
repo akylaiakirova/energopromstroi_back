@@ -10,7 +10,8 @@ return new class extends Migration
     {
         Schema::create('invoice_products', function (Blueprint $table) {
             $table->id()->comment('товары в накладной');
-            $table->foreignId('boiler_capacity_id')->constrained('boilers_capacity')->cascadeOnUpdate()->cascadeOnDelete();
+            $table->foreignId('invoice_id')->constrained('invoices')->cascadeOnUpdate()->cascadeOnDelete();
+            $table->string('product_name');
             $table->unsignedInteger('count');
             $table->decimal('price_for_1', 12, 2);
             $table->decimal('total_price', 14, 2);

@@ -11,10 +11,11 @@ return new class extends Migration
         Schema::create('invoices', function (Blueprint $table) {
             $table->id()->comment('накладные');
             $table->dateTime('date');
-            $table->string('number');
+            $table->string('number')->comment('Н_номер клиента_год.месяц-порядковый номер'); 
             $table->foreignId('contract_id')->nullable()->constrained('contracts')->cascadeOnUpdate()->cascadeOnDelete();
             $table->foreignId('client_id')->nullable()->constrained('clients')->cascadeOnUpdate()->cascadeOnDelete();
             $table->string('address')->nullable();
+            $table->json('files');
             $table->text('note')->nullable();
             $table->timestamp('createAt')->useCurrent();
             $table->timestamp('updatedAt')->nullable()->useCurrentOnUpdate();

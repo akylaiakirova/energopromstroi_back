@@ -1427,3 +1427,60 @@
   }
 ]
 ```
+
+---------------------------------------------------------------------------
+
+# 👉 REST API — Накладные (invoices) и товары накладной (invoice_products)
+Все эндпоинты требуют заголовок `Authorization: Bearer <token>`.
+
+Поля сущности invoices:
+- `date` (datetime)
+- `number` (string) — `Н_номер клиента_год.месяц-порядковый номер`
+- `contract_id` (int|null) — ссылка на `contracts.id`
+- `client_id` (int|null) — ссылка на `clients.id`
+- `address` (string|null)
+- `files` (array<string>)
+- `note` (string|null)
+
+Поля сущности invoice_products:
+- `invoice_id` (int) — ссылка на `invoices.id`
+- `product_name` (string)
+- `count` (int)
+- `price_for_1` (decimal(12,2))
+- `total_price` (decimal(14,2)) — можно не передавать, сервер посчитает `count * price_for_1`
+
+## Получить список накладных (с товарами)
+- Метод: `GET /invoices`
+- Параметры запроса (query):
+  - `client_id` (int, optional)
+  - `contract_id` (int, optional)
+- Ответ `200`: массив накладных, внутри `products` — массив товаров (и подгружаются `client`, `contract`)
+
+## Создать накладную (с товарами)
+- Метод: `POST /invoices`
+- Тело запроса (JSON):
+  - `date` (datetime, required)
+  - `number` (string, required)
+  - `contract_id` (int, optional, exists: contracts.id)
+  - `client_id` (int, optional, exists: clients.id)
+  - `address` (string, optional)
+  - `files` (array<string>, optional)
+  - `note` (string, optional)
+  - `invoice_products` (array, required, min 1)
+    - `product_name` (string, required)
+    - `count` (int, required, min 1)
+    - `price_for_1` (number, required, min 0)
+    - `total_price` (number, optional, min 0)
+- Ответ `201`: созданная накладная со списком товаров
+
+## Обновить накладную (и перезаписать товары массивом)
+- Метод: `PUT /invoices/{id}`
+- Тело запроса (JSON): те же поля, что и при создании. `invoice_products` обязателен и **полностью перезаписывает** список товаров.
+- Ответ `200`: обновлённая накладная со списком товаров
+
+## Удалить накладную
+- Метод: `DELETE /invoices/{id}`
+- Ответ `200`:
+```json
+{ "message": "Удалено" }
+```

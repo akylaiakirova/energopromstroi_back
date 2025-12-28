@@ -21,6 +21,7 @@ use App\Http\Controllers\CashboxController;
 use App\Http\Controllers\MaterialsConsumptionController;
 use App\Http\Controllers\ConversionsController;
 use App\Http\Controllers\BoilerReadyController;
+use App\Http\Controllers\InvoiceController;
 use App\Models\StockBalance;
 
 /*
@@ -160,6 +161,12 @@ Route::middleware('auth:api')->group(function () {
     Route::post('cashbox', [CashboxController::class, 'store']);
     Route::put('cashbox/{cashbox}', [CashboxController::class, 'update']);
     Route::delete('cashbox/{cashbox}', [CashboxController::class, 'destroy']);
+
+    // Накладные (invoices) + товары накладной (invoice_products)
+    Route::get('invoices', [InvoiceController::class, 'index']);
+    Route::post('invoices', [InvoiceController::class, 'store']);
+    Route::put('invoices/{invoice}', [InvoiceController::class, 'update']);
+    Route::delete('invoices/{invoice}', [InvoiceController::class, 'destroy']);
 });
 
 
