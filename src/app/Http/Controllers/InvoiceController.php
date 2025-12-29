@@ -6,6 +6,8 @@ use App\Models\Invoice;
 use App\Models\InvoiceProduct;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 
 /**
  * CRUD для накладных (invoices) + товары накладной (invoice_products).
@@ -31,21 +33,31 @@ class InvoiceController extends Controller
     /** Создать накладную с товарами. */
     public function store(Request $request)
     {
-        $data = $request->validate([
+        $rules = [
             'date' => ['required', 'date'],
             'number' => ['required', 'string', 'max:255'],
             'contract_id' => ['nullable', 'integer', 'exists:contracts,id'],
             'client_id' => ['nullable', 'integer', 'exists:clients,id'],
             'address' => ['nullable', 'string', 'max:255'],
-            'files' => ['nullable', 'array'],
-            'files.*' => ['string'],
             'note' => ['nullable', 'string'],
             'invoice_products' => ['required', 'array', 'min:1'],
             'invoice_products.*.product_name' => ['required', 'string', 'max:255'],
             'invoice_products.*.count' => ['required', 'integer', 'min:1'],
             'invoice_products.*.price_for_1' => ['required', 'numeric', 'min:0'],
             'invoice_products.*.total_price' => ['nullable', 'numeric', 'min:0'],
-        ]);
+        ];
+
+        if ($request->hasFile('files')) {
+            $rules['files'] = ['nullable', 'array'];
+            $rules['files.*'] = ['file'];
+            $data = $request->validate($rules);
+            $data['files'] = $this->fileNamesFromUploads($request->file('files'));
+        } else {
+            $rules['files'] = ['nullable', 'array'];
+            $rules['files.*'] = ['string'];
+            $data = $request->validate($rules);
+            $data['files'] = $data['files'] ?? [];
+        }
 
         return DB::transaction(function () use ($data) {
             $invoice = Invoice::create([
@@ -83,21 +95,33 @@ class InvoiceController extends Controller
     /** Обновить накладную и перезаписать товары массивом. */
     public function update(Request $request, Invoice $invoice)
     {
-        $data = $request->validate([
+        $rules = [
             'date' => ['required', 'date'],
             'number' => ['required', 'string', 'max:255'],
             'contract_id' => ['nullable', 'integer', 'exists:contracts,id'],
             'client_id' => ['nullable', 'integer', 'exists:clients,id'],
             'address' => ['nullable', 'string', 'max:255'],
-            'files' => ['nullable', 'array'],
-            'files.*' => ['string'],
             'note' => ['nullable', 'string'],
             'invoice_products' => ['required', 'array', 'min:1'],
             'invoice_products.*.product_name' => ['required', 'string', 'max:255'],
             'invoice_products.*.count' => ['required', 'integer', 'min:1'],
             'invoice_products.*.price_for_1' => ['required', 'numeric', 'min:0'],
             'invoice_products.*.total_price' => ['nullable', 'numeric', 'min:0'],
-        ]);
+        ];
+
+        if ($request->hasFile('files')) {
+            $rules['files'] = ['nullable', 'array'];
+            $rules['files.*'] = ['file'];
+            $data = $request->validate($rules);
+            $data['files'] = $this->fileNamesFromUploads($request->file('files'));
+        } else {
+            $rules['files'] = ['nullable', 'array'];
+            $rules['files.*'] = ['string'];
+            $data = $request->validate($rules);
+            if (array_key_exists('files', $data)) {
+                $data['files'] = $data['files'] ?? [];
+            }
+        }
 
         return DB::transaction(function () use ($invoice, $data) {
             $invoice->update([
@@ -139,6 +163,29 @@ class InvoiceController extends Controller
     {
         $invoice->delete();
         return response()->json(['message' => 'Удалено']);
+    }
+
+    /**
+     * Сгенерировать имена из загруженных файлов: invoices_YYYYmmdd_HHMMSS_filename
+     *
+     * @param array<int,\Illuminate\Http\UploadedFile>|null $uploads
+     * @return array<int,string>
+     */
+    private function fileNamesFromUploads(?array $uploads): array
+    {
+        if (!$uploads) {
+            return [];
+        }
+        $now = now()->format('Ymd_His');
+        $names = [];
+        foreach ($uploads as $file) {
+            $orig = $file->getClientOriginalName();
+            $safe = preg_replace('/[^A-Za-z0-9._-]/', '_', $orig);
+            $name = 'invoices_'.$now.'_'.$safe;
+            $file->storeAs('invoices', $name, 'public');
+            $names[] = $name;
+        }
+        return $names;
     }
 }
 

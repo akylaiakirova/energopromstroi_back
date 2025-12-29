@@ -1449,6 +1449,8 @@
 - `price_for_1` (decimal(12,2))
 - `total_price` (decimal(14,2)) — можно не передавать, сервер посчитает `count * price_for_1`
 
+Поле `files` — массив строк с именами файлов. Имена на стороне сервера нормализуются в формате `invoices_YYYYmmdd_HHMMSS_xxxxxx`. Файлы сохраняются в публичное хранилище в подпапку `invoices` и доступны через `/storage/invoices/{name}`.
+
 ## Получить список накладных (с товарами)
 - Метод: `GET /invoices`
 - Параметры запроса (query):
@@ -1458,13 +1460,13 @@
 
 ## Создать накладную (с товарами)
 - Метод: `POST /invoices`
-- Тело запроса (JSON):
+- Тело запроса (JSON или multipart/form-data):
   - `date` (datetime, required)
   - `number` (string, required)
   - `contract_id` (int, optional, exists: contracts.id)
   - `client_id` (int, optional, exists: clients.id)
   - `address` (string, optional)
-  - `files` (array<string>, optional)
+  - `files` (array<string>|array<file>, optional) — при multipart файлы будут сохранены и переименованы
   - `note` (string, optional)
   - `invoice_products` (array, required, min 1)
     - `product_name` (string, required)
@@ -1475,7 +1477,7 @@
 
 ## Обновить накладную (и перезаписать товары массивом)
 - Метод: `PUT /invoices/{id}`
-- Тело запроса (JSON): те же поля, что и при создании. `invoice_products` обязателен и **полностью перезаписывает** список товаров.
+- Тело запроса (JSON или multipart/form-data): те же поля, что и при создании. `invoice_products` обязателен и **полностью перезаписывает** список товаров.
 - Ответ `200`: обновлённая накладная со списком товаров
 
 ## Удалить накладную
