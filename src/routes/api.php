@@ -22,6 +22,8 @@ use App\Http\Controllers\MaterialsConsumptionController;
 use App\Http\Controllers\ConversionsController;
 use App\Http\Controllers\BoilerReadyController;
 use App\Http\Controllers\InvoiceController;
+use App\Http\Controllers\AvrAcceptanceController;
+use App\Http\Controllers\AvrEmployeesController;
 use App\Models\StockBalance;
 
 /*
@@ -167,6 +169,18 @@ Route::middleware('auth:api')->group(function () {
     Route::post('invoices', [InvoiceController::class, 'store']);
     Route::put('invoices/{invoice}', [InvoiceController::class, 'update']);
     Route::delete('invoices/{invoice}', [InvoiceController::class, 'destroy']);
+
+    // АВР и акты приемки (avr_acceptance) для клиентов
+    Route::get('avr-acceptance', [AvrAcceptanceController::class, 'index']);
+    Route::post('avr-acceptance', [AvrAcceptanceController::class, 'store']);
+    Route::put('avr-acceptance/{avr_acceptance}', [AvrAcceptanceController::class, 'update']);
+    Route::delete('avr-acceptance/{avr_acceptance}', [AvrAcceptanceController::class, 'destroy']);
+
+    // АВР сотрудников (avr_employees)
+    Route::get('avr-employees', [AvrEmployeesController::class, 'index']);
+    Route::post('avr-employees', [AvrEmployeesController::class, 'store']);
+    Route::put('avr-employees/{avr_employee}', [AvrEmployeesController::class, 'update']);
+    Route::delete('avr-employees/{avr_employee}', [AvrEmployeesController::class, 'destroy']);
 });
 
 

@@ -26,3 +26,6 @@ php8.4 artisan view:cache
 php8.4 artisan optimize
 
 php8.4 artisan route:list
+
+
+php8.4 artisan migrate --path=database/migrations/2025_09_14_000026_create_avr_employees_table.php

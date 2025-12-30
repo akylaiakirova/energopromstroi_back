@@ -6,11 +6,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class AvrAcceptance extends Model
+class AvrEmployee extends Model
 {
     use HasFactory;
 
-    protected $table = 'avr_acceptance';
+    protected $table = 'avr_employees';
 
     public const CREATED_AT = 'createAt';
     public const UPDATED_AT = 'updatedAt';
@@ -20,11 +20,13 @@ class AvrAcceptance extends Model
     protected $casts = [
         'files' => 'array',
         'date' => 'datetime',
-        'client_id' => 'integer',
+        'user_id' => 'integer',
     ];
 
-    public function client(): BelongsTo
+    public function user(): BelongsTo
     {
-        return $this->belongsTo(Client::class, 'client_id');
+        return $this->belongsTo(User::class, 'user_id');
     }
 }
+
+

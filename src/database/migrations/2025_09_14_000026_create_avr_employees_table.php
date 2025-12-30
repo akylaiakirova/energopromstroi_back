@@ -8,9 +8,9 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('avr_acceptance', function (Blueprint $table) {
-            $table->id()->comment('АВР и АКТ приемки для клиентов');
-            $table->foreignId('client_id')->constrained('clients')->cascadeOnUpdate()->cascadeOnDelete();
+        Schema::create('avr_employees', function (Blueprint $table) {
+            $table->id()->comment('АВР сотрудников');
+            $table->foreignId('user_id')->constrained('users')->cascadeOnUpdate()->cascadeOnDelete();
             $table->dateTime('date');
             $table->string('name')->comment('наименование объекта');
             $table->json('files');
@@ -22,7 +22,7 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('avr_acceptance');
+        Schema::dropIfExists('avr_employees');
     }
 };
 
