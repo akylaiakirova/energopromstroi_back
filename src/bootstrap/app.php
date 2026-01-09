@@ -12,7 +12,12 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        // Включаем CORS для запросов между поддоменами (и локальной отладки).
+        // Настройки лежат в config/cors.php
+        $middleware->append(\Illuminate\Http\Middleware\HandleCors::class);
+
+        // Диагностика CORS именно для /api/auth/login (OPTIONS/POST) в storage/logs/laravel.log
+        $middleware->append(\App\Http\Middleware\CorsAuthDebugMiddleware::class);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
