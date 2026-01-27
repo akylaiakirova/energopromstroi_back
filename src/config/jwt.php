@@ -89,7 +89,8 @@ return [
     |
     */
 
-    'ttl' => (int) env('JWT_TTL', 60),
+    // 3 days by default
+    'ttl' => (int) env('JWT_TTL', 60 * 24 * 3),
 
     /*
     |--------------------------------------------------------------------------
@@ -108,7 +109,8 @@ return [
     |
     */
 
-    'refresh_ttl' => (int) env('JWT_REFRESH_TTL', 20160),
+    // 60 days by default
+    'refresh_ttl' => (int) env('JWT_REFRESH_TTL', 60 * 24 * 60),
 
     /*
     |--------------------------------------------------------------------------

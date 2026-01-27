@@ -13,7 +13,7 @@ return new class extends Migration
             $table->boolean('isIncome');
             $table->foreignId('cash_types_id')->constrained('cash_types')->cascadeOnUpdate()->cascadeOnDelete();
             $table->decimal('sum', 14, 2);
-            $table->text('note');
+            $table->text('note')->nullable();
             $table->json('files')->nullable();
             $table->dateTime('dateTime');
             $table->timestamp('createAt')->useCurrent();

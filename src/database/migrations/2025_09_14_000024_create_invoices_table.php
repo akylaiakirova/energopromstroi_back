@@ -15,7 +15,7 @@ return new class extends Migration
             $table->foreignId('contract_id')->nullable()->constrained('contracts')->cascadeOnUpdate()->cascadeOnDelete();
             $table->foreignId('client_id')->nullable()->constrained('clients')->cascadeOnUpdate()->cascadeOnDelete();
             $table->string('address')->nullable();
-            $table->json('files');
+            $table->json('files')->nullable();
             $table->text('note')->nullable();
             $table->timestamp('createAt')->useCurrent();
             $table->timestamp('updatedAt')->nullable()->useCurrentOnUpdate();
