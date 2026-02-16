@@ -155,14 +155,17 @@ Route::middleware('auth:api')->group(function () {
     Route::post('stocks-balance/write-off', [StockBalanceController::class, 'whiteOff']);
     Route::get('write-off', [WriteOffController::class, 'index']);
 
-    // Типы доходов/расходов (cash_types)
-    Route::get('cash-types', [CashTypeController::class, 'index']);
-
     // Касса (cashbox)
     Route::get('cashbox', [CashboxController::class, 'index']);
     Route::post('cashbox', [CashboxController::class, 'store']);
     Route::put('cashbox/{cashbox}', [CashboxController::class, 'update']);
     Route::delete('cashbox/{cashbox}', [CashboxController::class, 'destroy']);
+
+    // Типы доходов/расходов (cash_types)
+    Route::get('cash-types', [CashTypeController::class, 'index']);
+    Route::post('cash-types', [CashTypeController::class, 'store']);
+    Route::put('cash-types/{cashType}', [CashTypeController::class, 'update']);
+    Route::delete('cash-types/{cashType}', [CashTypeController::class, 'destroy']);
 
     // Накладные (invoices) + товары накладной (invoice_products)
     Route::get('invoices', [InvoiceController::class, 'index']);

@@ -21,6 +21,37 @@ class CashTypeController extends Controller
 
         return $query->orderByDesc('isIncome')->orderBy('name')->get();
     }
+
+    /** Создать тип дохода/расхода. */
+    public function store(Request $request)
+    {
+        $data = $request->validate([
+            'isIncome' => ['required', 'boolean'],
+            'name' => ['required', 'string'],
+        ]);
+
+        $item = CashType::create($data);
+        return response()->json($item, 201);
+    }
+
+    /** Обновить тип дохода/расхода. */
+    public function update(Request $request, CashType $cashType)
+    {
+        $data = $request->validate([
+            'isIncome' => ['required', 'boolean'],
+            'name' => ['required', 'string'],
+        ]);
+
+        $cashType->update($data);
+        return response()->json($cashType);
+    }
+
+    /** Удалить тип дохода/расхода. */
+    public function destroy(CashType $cashType)
+    {
+        $cashType->delete();
+        return response()->json(['message' => 'Удалено']);
+    }
 }
 
 

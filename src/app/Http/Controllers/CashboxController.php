@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Cashbox;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
@@ -13,10 +14,82 @@ use Illuminate\Support\Facades\Validator;
  */
 class CashboxController extends Controller
 {
-    /** Список операций по дате убыванию. */
-    public function index()
+    /**
+     * Список операций по дате убыванию.
+     *
+     * Query:
+     * - dateFrom (d.m.Y, optional)
+     * - dateTo (d.m.Y, optional)
+     *
+     * Если период не указан — возвращаем операции только за сегодня.
+     */
+    public function index(Request $request)
     {
-        return Cashbox::with('cashType')->orderBy('dateTime', 'desc')->get();
+        $dateFromStr = $request->query('dateFrom');
+        $dateToStr = $request->query('dateTo');
+
+        if (($dateFromStr && ! $dateToStr) || (! $dateFromStr && $dateToStr)) {
+            return response()->json([
+                'message' => 'Validation failed',
+                'errors' => [
+                    'dateFrom' => ['Укажите оба параметра: dateFrom и dateTo (формат дд.мм.гггг).'],
+                    'dateTo' => ['Укажите оба параметра: dateFrom и dateTo (формат дд.мм.гггг).'],
+                ],
+            ], 422);
+        }
+
+        if ($dateFromStr && $dateToStr) {
+            try {
+                $from = Carbon::createFromFormat('d.m.Y', (string) $dateFromStr)->startOfDay();
+                $to = Carbon::createFromFormat('d.m.Y', (string) $dateToStr)->endOfDay();
+            } catch (\Throwable $e) {
+                return response()->json([
+                    'message' => 'Validation failed',
+                    'errors' => [
+                        'dateFrom' => ['Неверный формат даты. Используйте дд.мм.гггг.'],
+                        'dateTo' => ['Неверный формат даты. Используйте дд.мм.гггг.'],
+                    ],
+                ], 422);
+            }
+
+            if ($from->greaterThan($to)) {
+                return response()->json([
+                    'message' => 'Validation failed',
+                    'errors' => [
+                        'dateFrom' => ['dateFrom не может быть больше dateTo.'],
+                    ],
+                ], 422);
+            }
+
+            $period = $from->format('d.m.Y').' - '.$to->format('d.m.Y');
+        } else {
+            $from = now()->startOfDay();
+            $to = now()->endOfDay();
+            $period = $from->format('d.m.Y');
+        }
+
+        $baseQuery = Cashbox::query()
+            ->whereBetween('dateTime', [$from->toDateTimeString(), $to->toDateTimeString()]);
+
+        $items = (clone $baseQuery)
+            ->with('cashType')
+            ->orderBy('dateTime', 'desc')
+            ->get();
+
+        $incomeSumRaw = (clone $baseQuery)->where('isIncome', true)->sum('sum');
+        $expenseSumRaw = (clone $baseQuery)->where('isIncome', false)->sum('sum');
+
+        $incomeSum = $this->money($incomeSumRaw);
+        $expenseSum = $this->money($expenseSumRaw);
+        $balance = $this->money(((float) $incomeSumRaw) - ((float) $expenseSumRaw));
+
+        return response()->json([
+            'period' => $period,
+            'incomeSum' => $incomeSum,
+            'expenseSum' => $expenseSum,
+            'balance' => $balance,
+            'items' => $items,
+        ]);
     }
 
     /** Создать запись кассы. */
@@ -244,6 +317,11 @@ class CashboxController extends Controller
             $names[] = $name;
         }
         return $names;
+    }
+
+    private function money(mixed $value): string
+    {
+        return number_format((float) $value, 2, '.', '');
     }
 }
 
